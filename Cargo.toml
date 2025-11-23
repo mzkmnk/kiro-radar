@@ -1,0 +1,12 @@
+[package]
+name = "kiro-radar"
+version = "0.1.0"
+description = "A TUI dashboard for tracking Spec-Driven Development progress in AWS Kiro IDE."
+authors = ["mzkmnk <sma0729mex@gmail.com>"]
+license = "MIT"
+edition = "2024"
+
+[dependencies]
+crossterm = "0.28.1"
+ratatui = "0.29.0"
+color-eyre = "0.6.3"

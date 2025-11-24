@@ -45,7 +45,7 @@
   - 最下部での下スクロールテスト
   - _Requirements: 4.3, 4.4_
 
-- [ ] 5. spec/reader.rs モジュールの作成
+- [x] 5. spec/reader.rs モジュールの作成
 
   - SpecContent 構造体を定義
   - read_spec_content() 関数を実装

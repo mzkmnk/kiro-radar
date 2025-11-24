@@ -1,4 +1,5 @@
 use crate::app::{App, ViewMode};
+use crate::ui::calculate_max_scroll;
 use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 
@@ -37,6 +38,10 @@ fn handle_list_view_keys(app: &mut App, key: KeyEvent) {
 
 /// 詳細ビューでのキーイベント処理
 fn handle_detail_view_keys(app: &mut App, key: KeyEvent) {
+    // コンテンツ領域の高さを推定（ターミナルサイズに依存するが、一般的な値を使用）
+    // 実際のレンダリング時にはより正確な値が使用される
+    const ESTIMATED_CONTENT_HEIGHT: usize = 20;
+
     match (key.modifiers, key.code) {
         // 終了操作
         (_, KeyCode::Char('q'))
@@ -45,8 +50,11 @@ fn handle_detail_view_keys(app: &mut App, key: KeyEvent) {
         (_, KeyCode::Esc) => app.exit_detail_view(),
         // タブ切り替え
         (_, KeyCode::Tab) => app.next_tab(),
-        // スクロール操作（max_scroll は仮に大きな値を設定、実際の UI レンダリング時に調整）
-        (_, KeyCode::Down | KeyCode::Char('j')) => app.scroll_down(usize::MAX),
+        // スクロール操作
+        (_, KeyCode::Down | KeyCode::Char('j')) => {
+            let max_scroll = calculate_max_scroll(app, ESTIMATED_CONTENT_HEIGHT);
+            app.scroll_down(max_scroll);
+        }
         (_, KeyCode::Up | KeyCode::Char('k')) => app.scroll_up(),
         _ => {}
     }

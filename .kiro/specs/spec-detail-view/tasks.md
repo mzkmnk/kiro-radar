@@ -21,7 +21,7 @@
   - スクロール位置の初期化とクリアを含む
   - _Requirements: 1.1, 5.1, 1.3, 5.3, 2.1_
 
-- [ ] 3.1 タブ切り替えメソッドの実装
+- [x] 3.1 タブ切り替えメソッドの実装
 
   - next_tab() メソッドを実装（Requirements → Design → Tasks → Requirements）
   - タブ切り替え時にスクロール位置を 0 にリセット
@@ -93,7 +93,7 @@
   - **Property 11: 終了操作の動作**
   - **Validates: Requirements 6.3**
 
-- [ ] 7. タブ UI の実装（ui.rs）
+- [x] 7. タブ UI の実装（ui.rs）
 
   - render_tabs() ヘルパー関数を作成
   - 右上にタブ一覧を表示（Requirements、Design、Tasks）
@@ -106,7 +106,7 @@
   - **Property 16: アクティブタブの強調表示**
   - **Validates: Requirements 9.5, 9.6**
 
-- [ ] 7.2 詳細ビュー UI の実装（ui.rs）
+- [x] 7.2 詳細ビュー UI の実装（ui.rs）
 
   - render_detail_view() 関数を作成
   - Spec 名のヘッダー表示

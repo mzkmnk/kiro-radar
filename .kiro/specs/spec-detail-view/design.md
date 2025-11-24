@@ -96,13 +96,13 @@ Spec ファイルの内容を保持する構造体：
 
 ```rust
 pub struct SpecContent {
-    pub requirements: Result<String, String>,
-    pub design: Result<String, String>,
-    pub tasks: Result<String, String>,
+    pub requirements: Option<String>,
+    pub design: Option<String>,
+    pub tasks: Option<String>,
 }
 ```
 
-各フィールドは `Result<String, String>` 型で、成功時はファイル内容、失敗時はエラーメッセージを保持します。
+各フィールドは `Option<String>` 型で、ファイルが正常に読み込めた場合は `Some(内容)`、読み込めなかった場合は `None` を保持します。エラーの詳細はログに記録されます。
 
 ### spec/reader.rs（新規モジュール）
 
@@ -113,8 +113,8 @@ pub fn read_spec_content(spec_set: &SpecSet) -> SpecContent
 ```
 
 - 各ファイル（requirements.md、design.md、tasks.md）の読み込みを試行
-- ファイルが存在しない場合やエラーの場合は適切なエラーメッセージを返す
-- IO エラーは `Result` のエラー側に格納
+- ファイルが存在しない場合やエラーの場合は `None` を返す
+- IO エラーはログに記録し、`None` を返す
 
 ## Data Models
 
@@ -131,9 +131,9 @@ pub enum ViewMode {
 
 ```rust
 pub struct SpecContent {
-    pub requirements: Result<String, String>,
-    pub design: Result<String, String>,
-    pub tasks: Result<String, String>,
+    pub requirements: Option<String>,
+    pub design: Option<String>,
+    pub tasks: Option<String>,
 }
 ```
 
@@ -229,33 +229,33 @@ Spec ファイルの読み込み時に発生する可能性のあるエラー：
 1. **ファイル不在**: `Option<PathBuf>` が `None` の場合
    - 対応: "File not found" メッセージを表示
 2. **IO エラー**: ファイル読み込み時の権限エラーなど
-
-   - 対応: エラー内容を含むメッセージを表示（例: "Error reading file: Permission denied"）
-
+   - 対応: "Failed to read file" メッセージを表示
 3. **UTF-8 デコードエラー**: ファイルが有効な UTF-8 でない場合
-   - 対応: "Invalid UTF-8 encoding" メッセージを表示
+   - 対応: "Failed to read file" メッセージを表示
+
+すべてのエラーは `Option::None` として扱われ、UI では統一されたエラーメッセージを表示します。詳細なエラー情報が必要な場合は、開発時にログ出力を追加できます。
 
 ### エラーハンドリング戦略
 
 ```rust
-pub fn read_spec_file(path: &Option<PathBuf>) -> Result<String, String> {
+pub fn read_spec_file(path: &Option<PathBuf>) -> Option<String> {
     match path {
-        None => Err("File not found".to_string()),
+        None => None,
         Some(p) => {
-            std::fs::read_to_string(p)
-                .map_err(|e| format!("Error reading file: {}", e))
+            std::fs::read_to_string(p).ok()
         }
     }
 }
 ```
 
-エラーは `Result<String, String>` で表現し、UI レンダリング時にエラーメッセージを表示します。
+エラーは `Option<String>` で表現し、`None` の場合は UI レンダリング時に適切なメッセージを表示します。詳細なエラー情報が必要な場合は、ログに記録します。
 
 ### パニックの回避
 
-- すべてのファイル操作は `Result` 型で処理
+- すべてのファイル操作は `Option` 型で処理し、エラーは `ok()` で変換
 - 配列アクセスは境界チェック済みのインデックスのみ使用
 - `unwrap()` の使用を避け、適切なエラーハンドリングを実施
+- 詳細なエラー情報が必要な場合は `color_eyre::Result<T>` を使用
 
 ## Testing Strategy
 

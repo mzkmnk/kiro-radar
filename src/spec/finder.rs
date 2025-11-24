@@ -5,6 +5,7 @@ use std::{
 
 use color_eyre::eyre::Result;
 
+#[derive(Debug)]
 pub struct SpecSet {
     // spec name
     pub name: String,

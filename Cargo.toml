@@ -2,7 +2,7 @@
 name = "kiro-radar"
 version = "0.1.0"
 description = "A TUI dashboard for tracking Spec-Driven Development progress in AWS Kiro IDE."
-authors = ["mzkmnk <sma0729mex@gmail.com>"]
+authors = ["mzkmnk <mzk.mnk.dev@gmail.com>"]
 license = "MIT"
 edition = "2024"
 

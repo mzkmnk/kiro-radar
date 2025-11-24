@@ -7,11 +7,19 @@ use color_eyre::Result;
 use ratatui::DefaultTerminal;
 use ratatui::widgets::ListState;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, PartialEq)]
+pub enum ViewMode {
+    List,
+    Detail { spec_index: usize },
+}
+
+#[derive(Debug)]
 pub struct App {
     pub running: bool,
     pub spec_sets: Vec<SpecSet>,
     pub list_state: ListState,
+    pub view_mode: ViewMode,
+    pub detail_scroll: usize,
 }
 
 impl App {
@@ -20,6 +28,8 @@ impl App {
             running: false,
             spec_sets: Vec::new(),
             list_state: ListState::default(),
+            view_mode: ViewMode::List,
+            detail_scroll: 0,
         };
 
         if let Ok(specs) = find_all_specs(path.as_ref()) {
@@ -60,6 +70,20 @@ impl App {
         self.list_state.select(Some(i));
     }
 
+    pub fn enter_detail_view(&mut self) {
+        if let Some(selected_index) = self.list_state.selected() {
+            self.view_mode = ViewMode::Detail {
+                spec_index: selected_index,
+            };
+            self.detail_scroll = 0;
+        }
+    }
+
+    pub fn exit_detail_view(&mut self) {
+        self.view_mode = ViewMode::List;
+        self.detail_scroll = 0;
+    }
+
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         self.running = true;
         while self.running {
@@ -67,5 +91,106 @@ impl App {
             handle_crossterm_events(&mut self)?;
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::TempDir;
+
+    #[test]
+    fn test_enter_detail_view() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // 初期状態はリストビュー
+        assert_eq!(app.view_mode, ViewMode::List);
+        assert_eq!(app.detail_scroll, 0);
+
+        // Spec がない場合は何も起こらない
+        app.enter_detail_view();
+        assert_eq!(app.view_mode, ViewMode::List);
+
+        // Spec を追加して選択状態にする
+        app.spec_sets.push(SpecSet {
+            name: "test-spec".to_string(),
+            requirements: None,
+            design: None,
+            tasks: None,
+            total_tasks: None,
+            completed_tasks: None,
+        });
+        app.list_state.select(Some(0));
+
+        // 詳細ビューに遷移
+        app.enter_detail_view();
+        assert_eq!(app.view_mode, ViewMode::Detail { spec_index: 0 });
+        assert_eq!(app.detail_scroll, 0);
+    }
+
+    #[test]
+    fn test_enter_detail_view_resets_scroll() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // Spec を追加
+        app.spec_sets.push(SpecSet {
+            name: "test-spec".to_string(),
+            requirements: None,
+            design: None,
+            tasks: None,
+            total_tasks: None,
+            completed_tasks: None,
+        });
+        app.list_state.select(Some(0));
+
+        // スクロール位置を変更
+        app.detail_scroll = 10;
+
+        // 詳細ビューに遷移するとスクロール位置が初期化される
+        app.enter_detail_view();
+        assert_eq!(app.detail_scroll, 0);
+    }
+
+    #[test]
+    fn test_exit_detail_view() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // Spec を追加して詳細ビューに遷移
+        app.spec_sets.push(SpecSet {
+            name: "test-spec".to_string(),
+            requirements: None,
+            design: None,
+            tasks: None,
+            total_tasks: None,
+            completed_tasks: None,
+        });
+        app.list_state.select(Some(0));
+        app.enter_detail_view();
+
+        // スクロール位置を変更
+        app.detail_scroll = 5;
+
+        // リストビューに戻る
+        app.exit_detail_view();
+        assert_eq!(app.view_mode, ViewMode::List);
+        assert_eq!(app.detail_scroll, 0);
+    }
+
+    #[test]
+    fn test_exit_detail_view_clears_scroll() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // 詳細ビュー状態を設定
+        app.view_mode = ViewMode::Detail { spec_index: 0 };
+        app.detail_scroll = 20;
+
+        // リストビューに戻るとスクロール位置がクリアされる
+        app.exit_detail_view();
+        assert_eq!(app.view_mode, ViewMode::List);
+        assert_eq!(app.detail_scroll, 0);
     }
 }

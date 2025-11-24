@@ -1,18 +1,18 @@
 # Implementation Plan
 
-- [ ] 1. ViewMode 列挙型の実装
+- [x] 1. ViewMode 列挙型の実装
 
   - app.rs に ViewMode enum を追加（List と Detail バリアント）
   - Clone と PartialEq を derive
   - _Requirements: 7.1, 7.2, 7.3_
 
-- [ ] 2. App 構造体の拡張
+- [x] 2. App 構造体の拡張
 
   - view_mode フィールドを追加（初期値: ViewMode::List）
   - detail_scroll フィールドを追加（初期値: 0）
   - _Requirements: 7.1, 1.3_
 
-- [ ] 3. ビューモード遷移メソッドの実装
+- [x] 3. ビューモード遷移メソッドの実装
 
   - enter_detail_view() メソッドを実装
   - exit_detail_view() メソッドを実装

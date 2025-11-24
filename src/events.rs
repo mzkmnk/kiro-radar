@@ -43,6 +43,8 @@ fn handle_detail_view_keys(app: &mut App, key: KeyEvent) {
         | (KeyModifiers::CONTROL, KeyCode::Char('c') | KeyCode::Char('C')) => quit(app),
         // リストビューへの復帰
         (_, KeyCode::Esc) => app.exit_detail_view(),
+        // タブ切り替え
+        (_, KeyCode::Tab) => app.next_tab(),
         // スクロール操作（max_scroll は仮に大きな値を設定、実際の UI レンダリング時に調整）
         (_, KeyCode::Down | KeyCode::Char('j')) => app.scroll_down(usize::MAX),
         (_, KeyCode::Up | KeyCode::Char('k')) => app.scroll_up(),

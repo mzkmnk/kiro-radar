@@ -15,14 +15,14 @@ pub struct App {
 }
 
 impl App {
-    pub fn new() -> Self {
+    pub fn new<P: AsRef<Path>>(path: P) -> Self {
         let mut app = Self {
             running: false,
             spec_sets: Vec::new(),
             list_state: ListState::default(),
         };
 
-        if let Ok(specs) = find_all_specs(Path::new(".")) {
+        if let Ok(specs) = find_all_specs(path.as_ref()) {
             app.spec_sets = specs;
 
             if !app.spec_sets.is_empty() {

@@ -84,6 +84,18 @@ impl App {
         self.detail_scroll = 0;
     }
 
+    pub fn scroll_down(&mut self, max_scroll: usize) {
+        if self.detail_scroll < max_scroll {
+            self.detail_scroll += 1;
+        }
+    }
+
+    pub fn scroll_up(&mut self) {
+        if self.detail_scroll > 0 {
+            self.detail_scroll = self.detail_scroll.saturating_sub(1);
+        }
+    }
+
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
         self.running = true;
         while self.running {
@@ -191,6 +203,65 @@ mod tests {
         // リストビューに戻るとスクロール位置がクリアされる
         app.exit_detail_view();
         assert_eq!(app.view_mode, ViewMode::List);
+        assert_eq!(app.detail_scroll, 0);
+    }
+
+    #[test]
+    fn test_scroll_down() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // 初期状態
+        assert_eq!(app.detail_scroll, 0);
+
+        // 下にスクロール
+        app.scroll_down(10);
+        assert_eq!(app.detail_scroll, 1);
+
+        app.scroll_down(10);
+        assert_eq!(app.detail_scroll, 2);
+    }
+
+    #[test]
+    fn test_scroll_down_at_bottom() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // 最下部に設定
+        let max_scroll = 5;
+        app.detail_scroll = max_scroll;
+
+        // 最下部で下スクロールしても変化しない
+        app.scroll_down(max_scroll);
+        assert_eq!(app.detail_scroll, max_scroll);
+    }
+
+    #[test]
+    fn test_scroll_up() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // スクロール位置を設定
+        app.detail_scroll = 5;
+
+        // 上にスクロール
+        app.scroll_up();
+        assert_eq!(app.detail_scroll, 4);
+
+        app.scroll_up();
+        assert_eq!(app.detail_scroll, 3);
+    }
+
+    #[test]
+    fn test_scroll_up_at_top() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // 最上部（0）に設定
+        app.detail_scroll = 0;
+
+        // 最上部で上スクロールしても変化しない
+        app.scroll_up();
         assert_eq!(app.detail_scroll, 0);
     }
 }

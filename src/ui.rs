@@ -2,49 +2,39 @@ use ratatui::{
     Frame,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize},
-    widgets::{Block, BorderType, Gauge, List, ListItem, Paragraph},
+    widgets::{Block, BorderType, List, ListItem, Paragraph},
 };
 
-pub fn render(frame: &mut Frame) {
-    let area = frame.area();
+use crate::app::App;
 
-    let main_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(1),
-            Constraint::Length(3),
-            Constraint::Length(5),
-        ])
-        .split(area);
+pub fn render(app: &mut App, frame: &mut Frame) {
+    let area = frame.area();
 
     let header =
         Paragraph::new("kiro-radar Dashboard").style(Style::default().fg(Color::Cyan).bold());
+
+    let items: Vec<ListItem> = app
+        .spec_sets
+        .iter()
+        .map(|spec| {
+            let text = spec.name.to_string();
+            ListItem::new(text)
+        })
+        .collect();
+
+    let items_count = items.len() as u16;
+
+    let list = List::new(items).block(
+        Block::bordered()
+            .title("Specs")
+            .border_type(BorderType::Rounded),
+    );
+
+    let main_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(1), Constraint::Length(items_count + 2)])
+        .split(area);
+
     frame.render_widget(header, main_chunks[0]);
-
-    let gauge = Gauge::default()
-        .block(
-            Block::bordered()
-                .title("Progress")
-                .border_type(BorderType::Rounded),
-        )
-        .gauge_style(Style::default().fg(Color::Green))
-        .percent(60)
-        .label("60%");
-
-    frame.render_widget(gauge, main_chunks[1]);
-
-    let items = vec![
-        ListItem::new("requirements.md"),
-        ListItem::new("design.md"),
-        ListItem::new("tasks.md"),
-    ];
-
-    let list = List::new(items)
-        .block(
-            Block::bordered()
-                .title("Spec Files")
-                .border_type(BorderType::Rounded),
-        )
-        .highlight_style(Style::default().bg(Color::Blue));
-    frame.render_widget(list, main_chunks[2]);
+    frame.render_widget(list, main_chunks[1]);
 }

@@ -4,7 +4,7 @@ use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{
-        Block, BorderType, Borders, Gauge, HighlightSpacing, List, ListItem, Padding, Paragraph,
+        Block, BorderType, Borders, Gauge, List, ListItem, Padding, Paragraph,
     },
 };
 
@@ -13,9 +13,6 @@ use crate::app::App;
 // Define a palette based on Charm's aesthetics
 const COLOR_PRIMARY: Color = Color::Magenta;
 const COLOR_SECONDARY: Color = Color::Cyan;
-const COLOR_SUCCESS: Color = Color::Green;
-const COLOR_WARNING: Color = Color::Yellow;
-const COLOR_ERROR: Color = Color::Red;
 const COLOR_TEXT: Color = Color::White;
 const COLOR_SUBTEXT: Color = Color::DarkGray;
 

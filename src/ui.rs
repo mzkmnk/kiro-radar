@@ -17,7 +17,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .spec_sets
         .iter()
         .map(|spec| {
-            let text = format!("{}", spec.name);
+            let text = spec.name.to_string();
             ListItem::new(text)
         })
         .collect();

@@ -128,7 +128,6 @@ pub fn render(app: &mut App, frame: &mut Frame) {
                 Span::styled(format!("  {:>3}% ({}/{})", percent, c, t), info_style),
             ]);
 
-            // メインアイテムと空行を返す
             vec![ListItem::new(line)]
         })
         .collect();

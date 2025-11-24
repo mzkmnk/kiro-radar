@@ -132,7 +132,7 @@
   - 特定のキーバインド文字列の検証（Tab キーを含む）
   - **Validates: Requirements 6.1, 6.2**
 
-- [ ] 9. render() 関数の分岐実装
+- [x] 9. render() 関数の分岐実装
 
   - ViewMode に応じて render_list_view() または render_detail_view() を呼び出し
   - 既存のリストビューロジックを render_list_view() に抽出

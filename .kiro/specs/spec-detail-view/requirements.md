@@ -9,6 +9,8 @@ Spec 詳細ビュー機能は、kiro-radar TUI アプリケーションにおい
 - **Spec セット**: requirements.md、design.md、tasks.md の 3 つのファイルで構成される仕様ドキュメント群
 - **リストビュー**: Spec セットの一覧を表示するメイン画面
 - **詳細ビュー**: 選択された Spec セットの詳細情報を表示する画面
+- **タブ**: 詳細ビュー内で requirements.md、design.md、tasks.md を切り替えるための UI 要素
+- **アクティブタブ**: 現在表示されているファイルに対応するタブ
 - **App**: アプリケーションの状態を管理する構造体
 - **ViewMode**: アプリケーションの表示モード（リストビューまたは詳細ビュー）
 - **スクロール状態**: 詳細ビュー内でのスクロール位置を管理する状態
@@ -27,26 +29,14 @@ Spec 詳細ビュー機能は、kiro-radar TUI アプリケーションにおい
 
 ### Requirement 2
 
-**User Story:** ユーザーとして、Spec の要件定義と設計内容を確認したいので、requirements.md と design.md の内容を閲覧できるようにしたい
+**User Story:** ユーザーとして、Spec の各ファイル内容を確認したいので、タブで切り替えて閲覧できるようにしたい
 
 #### Acceptance Criteria
 
-1. WHEN 詳細ビューが表示される THEN システムは requirements.md の内容を表示する
-2. WHEN requirements.md が存在しない THEN システムは「Requirements file not found」というメッセージを表示する
-3. WHEN 詳細ビューが表示される THEN システムは design.md の内容を表示する
-4. WHEN design.md が存在しない THEN システムは「Design file not found」というメッセージを表示する
-5. WHEN ファイル内容が表示領域を超える THEN システムはスクロール可能な状態で内容を表示する
-
-### Requirement 3
-
-**User Story:** ユーザーとして、実装タスクの進捗を確認したいので、tasks.md のチェックリストを閲覧できるようにしたい
-
-#### Acceptance Criteria
-
-1. WHEN 詳細ビューが表示される THEN システムは tasks.md の内容を表示する
-2. WHEN tasks.md が存在しない THEN システムは「Tasks file not found」というメッセージを表示する
-3. WHEN タスクリストが表示される THEN システムは完了タスクと未完了タスクを視覚的に区別して表示する
-4. WHEN タスクリストが表示領域を超える THEN システムはスクロール可能な状態で内容を表示する
+1. WHEN 詳細ビューが表示される THEN システムは requirements.md の内容をデフォルトで表示する
+2. WHEN アクティブタブのファイルが存在しない THEN システムは「File not found」というメッセージを表示する
+3. WHEN ファイル内容が表示領域を超える THEN システムはスクロール可能な状態で内容を表示する
+4. WHEN タスクファイルが表示される THEN システムは完了タスクと未完了タスクを視覚的に区別して表示する
 
 ### Requirement 4
 
@@ -77,7 +67,7 @@ Spec 詳細ビュー機能は、kiro-radar TUI アプリケーションにおい
 #### Acceptance Criteria
 
 1. WHEN 詳細ビューが表示される THEN システムはフッターにキーバインド情報を表示する
-2. WHEN フッターが表示される THEN システムは「↑/k: Up, ↓/j: Down, Esc: Back, q: Quit」を表示する
+2. WHEN フッターが表示される THEN システムは「Tab: Switch, ↑/k: Up, ↓/j: Down, Esc: Back, q: Quit」を表示する
 3. WHEN ユーザーが q キーまたは Ctrl+C を押す THEN システムはアプリケーションを終了する
 
 ### Requirement 7
@@ -99,3 +89,16 @@ Spec 詳細ビュー機能は、kiro-radar TUI アプリケーションにおい
 1. WHEN ファイル読み込みに失敗する THEN システムはエラーメッセージを詳細ビューに表示する
 2. WHEN ファイルが存在しない THEN システムは「File not found」メッセージを表示する
 3. WHEN ファイル読み込み中に IO エラーが発生する THEN システムはエラー内容を含むメッセージを表示する
+
+### Requirement 9
+
+**User Story:** ユーザーとして、Spec の異なるファイルを素早く切り替えたいので、Tab キーでタブを順次切り替えられるようにしたい
+
+#### Acceptance Criteria
+
+1. WHEN ユーザーが詳細ビューで Tab キーを押す THEN システムは次のタブに切り替える
+2. WHEN アクティブタブが tasks.md の状態で Tab キーを押す THEN システムは requirements.md タブに切り替える
+3. WHEN タブが切り替わる THEN システムはスクロール位置を 0 にリセットする
+4. WHEN タブが切り替わる THEN システムは新しいタブに対応するファイル内容を表示する
+5. WHEN 詳細ビューが表示される THEN システムは右上にタブ一覧を表示する
+6. WHEN タブ一覧が表示される THEN システムはアクティブタブを視覚的に強調表示する

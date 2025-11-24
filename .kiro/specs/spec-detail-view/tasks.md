@@ -1,25 +1,33 @@
 # Implementation Plan
 
-- [x] 1. ViewMode 列挙型の実装
+- [x] 1. ViewMode と DetailTab 列挙型の実装
 
   - app.rs に ViewMode enum を追加（List と Detail バリアント）
+  - app.rs に DetailTab enum を追加（Requirements、Design、Tasks バリアント）
   - Clone と PartialEq を derive
-  - _Requirements: 7.1, 7.2, 7.3_
+  - _Requirements: 7.1, 7.2, 7.3, 9.1_
 
 - [x] 2. App 構造体の拡張
 
   - view_mode フィールドを追加（初期値: ViewMode::List）
   - detail_scroll フィールドを追加（初期値: 0）
-  - _Requirements: 7.1, 1.3_
+  - active_tab フィールドを追加（初期値: DetailTab::Requirements）
+  - _Requirements: 7.1, 1.3, 2.1_
 
 - [x] 3. ビューモード遷移メソッドの実装
 
-  - enter_detail_view() メソッドを実装
+  - enter_detail_view() メソッドを実装（active_tab を Requirements に初期化）
   - exit_detail_view() メソッドを実装
   - スクロール位置の初期化とクリアを含む
-  - _Requirements: 1.1, 5.1, 1.3, 5.3_
+  - _Requirements: 1.1, 5.1, 1.3, 5.3, 2.1_
 
-- [ ]\* 3.1 ビューモード遷移のプロパティテストを実装
+- [ ] 3.1 タブ切り替えメソッドの実装
+
+  - next_tab() メソッドを実装（Requirements → Design → Tasks → Requirements）
+  - タブ切り替え時にスクロール位置を 0 にリセット
+  - _Requirements: 9.1, 9.2, 9.3_
+
+- [ ]\* 3.2 ビューモード遷移のプロパティテストを実装
 
   - **Property 1: ビューモード遷移の正確性**
   - **Property 2: ビューモード復帰の正確性**
@@ -27,6 +35,12 @@
   - **Property 4: スクロール位置の初期化**
   - **Property 5: スクロール位置のクリア**
   - **Validates: Requirements 1.1, 5.1, 5.2, 1.3, 5.3**
+
+- [ ]\* 3.3 タブ切り替えのプロパティテストを実装
+
+  - **Property 13: タブ切り替えの正確性**
+  - **Property 14: タブ切り替え時のスクロールリセット**
+  - **Validates: Requirements 9.1, 9.2, 9.3**
 
 - [x] 4. スクロール操作メソッドの実装
 
@@ -71,24 +85,37 @@
   - リストビューでの Enter キー処理を追加
   - 詳細ビューでの Esc キー処理を追加
   - 詳細ビューでの j/k、↑↓ キー処理を追加
-  - _Requirements: 1.1, 4.1, 4.2, 5.1, 6.3_
+  - 詳細ビューでの Tab キー処理を追加（next_tab() 呼び出し）
+  - _Requirements: 1.1, 4.1, 4.2, 5.1, 6.3, 9.1_
 
 - [ ]\* 6.1 イベント処理のプロパティテストを実装
 
   - **Property 11: 終了操作の動作**
   - **Validates: Requirements 6.3**
 
-- [ ] 7. 詳細ビュー UI の実装（ui.rs）
+- [ ] 7. タブ UI の実装（ui.rs）
+
+  - render_tabs() ヘルパー関数を作成
+  - 右上にタブ一覧を表示（Requirements、Design、Tasks）
+  - アクティブタブを視覚的に強調表示（反転表示または色付き）
+  - _Requirements: 9.5, 9.6_
+
+- [ ]\* 7.1 タブ UI のプロパティテストを実装
+
+  - **Property 15: タブ一覧の表示**
+  - **Property 16: アクティブタブの強調表示**
+  - **Validates: Requirements 9.5, 9.6**
+
+- [ ] 7.2 詳細ビュー UI の実装（ui.rs）
 
   - render_detail_view() 関数を作成
   - Spec 名のヘッダー表示
-  - Requirements セクションの表示
-  - Design セクションの表示
-  - Tasks セクションの表示
+  - タブ UI の統合（render_tabs() 呼び出し）
+  - アクティブタブに応じたファイル内容の表示
   - スクロール処理の実装
-  - _Requirements: 1.2, 2.1, 2.3, 2.5, 3.1, 3.3, 3.4_
+  - _Requirements: 1.2, 2.1, 2.3, 9.4_
 
-- [ ]\* 7.1 詳細ビュー UI のプロパティテストを実装
+- [ ]\* 7.3 詳細ビュー UI のプロパティテストを実装
 
   - **Property 9: Spec 名の表示**
   - **Property 12: ViewMode に応じたレンダリング分岐**
@@ -96,13 +123,13 @@
 
 - [ ] 8. 詳細ビューのフッター実装
 
-  - キーバインド情報の表示
+  - キーバインド情報の表示（Tab キーを含む）
   - _Requirements: 6.1, 6.2_
 
 - [ ]\* 8.1 フッター表示のプロパティテストとユニットテストを実装
 
   - **Property 10: キーバインド情報の表示**
-  - 特定のキーバインド文字列の検証
+  - 特定のキーバインド文字列の検証（Tab キーを含む）
   - **Validates: Requirements 6.1, 6.2**
 
 - [ ] 9. render() 関数の分岐実装

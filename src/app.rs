@@ -13,6 +13,13 @@ pub enum ViewMode {
     Detail { spec_index: usize },
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum DetailTab {
+    Requirements,
+    Design,
+    Tasks,
+}
+
 #[derive(Debug)]
 pub struct App {
     pub running: bool,
@@ -20,6 +27,7 @@ pub struct App {
     pub list_state: ListState,
     pub view_mode: ViewMode,
     pub detail_scroll: usize,
+    pub active_tab: DetailTab,
 }
 
 impl App {
@@ -30,6 +38,7 @@ impl App {
             list_state: ListState::default(),
             view_mode: ViewMode::List,
             detail_scroll: 0,
+            active_tab: DetailTab::Requirements,
         };
 
         if let Ok(specs) = find_all_specs(path.as_ref()) {
@@ -76,7 +85,17 @@ impl App {
                 spec_index: selected_index,
             };
             self.detail_scroll = 0;
+            self.active_tab = DetailTab::Requirements;
         }
+    }
+
+    pub fn next_tab(&mut self) {
+        self.active_tab = match self.active_tab {
+            DetailTab::Requirements => DetailTab::Design,
+            DetailTab::Design => DetailTab::Tasks,
+            DetailTab::Tasks => DetailTab::Requirements,
+        };
+        self.detail_scroll = 0;
     }
 
     pub fn exit_detail_view(&mut self) {
@@ -263,5 +282,67 @@ mod tests {
         // 最上部で上スクロールしても変化しない
         app.scroll_up();
         assert_eq!(app.detail_scroll, 0);
+    }
+
+    #[test]
+    fn test_next_tab_cycles_through_tabs() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // 初期状態は Requirements
+        assert_eq!(app.active_tab, DetailTab::Requirements);
+
+        // Requirements → Design
+        app.next_tab();
+        assert_eq!(app.active_tab, DetailTab::Design);
+
+        // Design → Tasks
+        app.next_tab();
+        assert_eq!(app.active_tab, DetailTab::Tasks);
+
+        // Tasks → Requirements（循環）
+        app.next_tab();
+        assert_eq!(app.active_tab, DetailTab::Requirements);
+    }
+
+    #[test]
+    fn test_next_tab_resets_scroll() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // スクロール位置を設定
+        app.detail_scroll = 10;
+
+        // タブ切り替え
+        app.next_tab();
+
+        // スクロール位置が0にリセットされる
+        assert_eq!(app.detail_scroll, 0);
+    }
+
+    #[test]
+    fn test_enter_detail_view_sets_requirements_tab() {
+        let temp_dir = TempDir::new().unwrap();
+        let mut app = App::new(temp_dir.path());
+
+        // Spec を追加
+        app.spec_sets.push(SpecSet {
+            name: "test-spec".to_string(),
+            requirements: None,
+            design: None,
+            tasks: None,
+            total_tasks: None,
+            completed_tasks: None,
+        });
+        app.list_state.select(Some(0));
+
+        // タブを変更
+        app.active_tab = DetailTab::Tasks;
+
+        // 詳細ビューに遷移
+        app.enter_detail_view();
+
+        // active_tab が Requirements にリセットされる
+        assert_eq!(app.active_tab, DetailTab::Requirements);
     }
 }

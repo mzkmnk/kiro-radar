@@ -12,6 +12,10 @@ kiro-radar is a tool that visualizes the Spec-based development process, allowin
 
 It automatically detects Spec sets under the `.kiro/specs` directory and tracks task progress in Markdown checklist format.
 
+## Screenshot
+
+![kiro-radar dashboard](.github/images/kiro-radar-image.png)
+
 ## Features
 
 - Automatic detection of Spec sets under the `.kiro/specs` directory

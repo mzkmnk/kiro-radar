@@ -5,6 +5,8 @@ use std::{
 
 use color_eyre::eyre::Result;
 
+use crate::spec::parser::parse_tasks_file;
+
 #[derive(Debug)]
 pub struct SpecSet {
     // spec name
@@ -15,6 +17,10 @@ pub struct SpecSet {
     pub design: Option<PathBuf>,
     // tasks.md path
     pub tasks: Option<PathBuf>,
+    // total tasks
+    pub total_tasks: Option<usize>,
+    // completed tasks
+    pub completed_tasks: Option<usize>,
 }
 
 /// .kiro/specs 配下の全てのSpecを探索
@@ -45,6 +51,7 @@ pub fn find_all_specs(project_root: &Path) -> Result<Vec<SpecSet>> {
             let requirements = path.join("requirements.md");
             let design = path.join("design.md");
             let tasks = path.join("tasks.md");
+            let (total_tasks, completed_tasks) = parse_tasks_file(&tasks)?;
 
             spec_sets.push(SpecSet {
                 name,
@@ -55,7 +62,9 @@ pub fn find_all_specs(project_root: &Path) -> Result<Vec<SpecSet>> {
                 },
                 tasks: if tasks.exists() { Some(tasks) } else { None },
                 design: if design.exists() { Some(design) } else { None },
-            })
+                total_tasks: Some(total_tasks),
+                completed_tasks: Some(completed_tasks),
+            });
         }
     }
 

@@ -11,11 +11,14 @@ use crate::spec::parser::parse_tasks_file;
 pub struct SpecSet {
     // spec name
     pub name: String,
-    // requirements.md path
+    // requirements.md path (reserved for future file opening feature)
+    #[allow(dead_code)]
     pub requirements: Option<PathBuf>,
-    // design.md path
+    // design.md path (reserved for future file opening feature)
+    #[allow(dead_code)]
     pub design: Option<PathBuf>,
-    // tasks.md path
+    // tasks.md path (reserved for future file opening feature)
+    #[allow(dead_code)]
     pub tasks: Option<PathBuf>,
     // total tasks
     pub total_tasks: Option<usize>,

@@ -26,19 +26,27 @@ It automatically detects Spec sets under the `.kiro/specs` directory and tracks 
 
 ## Installation
 
-### Prerequisites
+### From crates.io (Recommended)
+
+```bash
+cargo install kiro-radar
+```
+
+### From Source
+
+#### Prerequisites
 
 - Rust 1.75 or higher (Edition 2024 support)
 
-### Build
+#### Build
 
 ```bash
 # Clone the repository
 git clone https://github.com/mzkmnk/kiro-radar.git
 cd kiro-radar
 
-# Build
-cargo build --release
+# Build and install
+cargo install --path .
 ```
 
 ## Usage

@@ -65,7 +65,7 @@
   - 特定のエラーメッセージ文字列の検証
   - _Requirements: 2.2, 2.4, 3.2, 8.2_
 
-- [ ] 6. イベント処理の拡張（events.rs）
+- [x] 6. イベント処理の拡張（events.rs）
 
   - on_key_event() を ViewMode に応じて分岐
   - リストビューでの Enter キー処理を追加

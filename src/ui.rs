@@ -67,7 +67,8 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         ])
         .split(content_area);
 
-    let header = Paragraph::new("[ KIRO RADAR - 0.1.0 ]")
+    let version = env!("CARGO_PKG_VERSION");
+    let header = Paragraph::new(format!("[ KIRO RADAR - {} ]", version))
         .alignment(Alignment::Right)
         .style(
             Style::default()

@@ -36,25 +36,25 @@ pub fn find_all_specs(project_root: &Path) -> Result<Vec<SpecSet>> {
         let entry = entry?;
         let path = entry.path();
 
-        if path.is_dir() {
-            if let Some(name) = path.file_name() {
-                let name = name.to_string_lossy().to_string();
+        if path.is_dir()
+            && let Some(name) = path.file_name()
+        {
+            let name = name.to_string_lossy().to_string();
 
-                let requirements = path.join("requirements.md");
-                let design = path.join("design.md");
-                let tasks = path.join("tasks.md");
+            let requirements = path.join("requirements.md");
+            let design = path.join("design.md");
+            let tasks = path.join("tasks.md");
 
-                spec_sets.push(SpecSet {
-                    name,
-                    requirements: if requirements.exists() {
-                        Some(requirements)
-                    } else {
-                        None
-                    },
-                    tasks: if tasks.exists() { Some(tasks) } else { None },
-                    design: if design.exists() { Some(design) } else { None },
-                })
-            }
+            spec_sets.push(SpecSet {
+                name,
+                requirements: if requirements.exists() {
+                    Some(requirements)
+                } else {
+                    None
+                },
+                tasks: if tasks.exists() { Some(tasks) } else { None },
+                design: if design.exists() { Some(design) } else { None },
+            })
         }
     }
 

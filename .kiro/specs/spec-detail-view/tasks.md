@@ -121,7 +121,7 @@
   - **Property 12: ViewMode に応じたレンダリング分岐**
   - **Validates: Requirements 1.2, 7.2**
 
-- [ ] 8. 詳細ビューのフッター実装
+- [x] 8. 詳細ビューのフッター実装
 
   - キーバインド情報の表示（Tab キーを含む）
   - _Requirements: 6.1, 6.2_

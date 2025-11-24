@@ -3,9 +3,7 @@ use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{
-        Block, BorderType, Borders, Gauge, List, ListItem, Padding, Paragraph,
-    },
+    widgets::{Block, BorderType, Borders, Gauge, List, ListItem, Padding, Paragraph},
 };
 
 use crate::app::App;
@@ -152,7 +150,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
 
     frame.render_stateful_widget(list, chunks[2], &mut app.list_state);
 
-    let footer = Paragraph::new("[ q  -> quit ]")
+    let footer = Paragraph::new("[ ↑↓/jk -> navigate ] [ q  -> quit ]")
         .alignment(Alignment::Right)
         .style(
             Style::default()

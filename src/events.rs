@@ -16,6 +16,8 @@ fn on_key_event(app: &mut App, key: KeyEvent) {
     match (key.modifiers, key.code) {
         (_, KeyCode::Esc | KeyCode::Char('q'))
         | (KeyModifiers::CONTROL, KeyCode::Char('c') | KeyCode::Char('C')) => quit(app),
+        (_, KeyCode::Down | KeyCode::Char('j')) => app.next_item(),
+        (_, KeyCode::Up | KeyCode::Char('k')) => app.previous_item(),
         _ => {}
     }
 }

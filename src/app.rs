@@ -110,9 +110,7 @@ impl App {
     }
 
     pub fn scroll_up(&mut self) {
-        if self.detail_scroll > 0 {
-            self.detail_scroll = self.detail_scroll.saturating_sub(1);
-        }
+        self.detail_scroll = self.detail_scroll.saturating_sub(1);
     }
 
     pub fn run(mut self, mut terminal: DefaultTerminal) -> Result<()> {
